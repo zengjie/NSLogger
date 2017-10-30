@@ -2509,7 +2509,19 @@ static void	LoggerPushClientInfoToFrontOfQueue(Logger *logger)
 			@autoreleasepool
 			{
 				UIDevice *device = [UIDevice currentDevice];
-				LoggerMessageAddString(encoder, (CFStringRef)device.name, PART_KEY_UNIQUEID);
+
+                NSString* path = @"/tmp/original_udid.txt";
+                NSData* data = [NSData dataWithContentsOfFile:path];
+                NSString* value = nil;
+                if (data) {
+	                value = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];                	
+                }
+                if (value) {
+					LoggerMessageAddString(encoder, (CFStringRef)value, PART_KEY_UNIQUEID);
+                } else {
+					LoggerMessageAddString(encoder, (CFStringRef)device.name, PART_KEY_UNIQUEID);                	
+                }
+
 				LoggerMessageAddString(encoder, (CFStringRef)device.systemVersion, PART_KEY_OS_VERSION);
 				LoggerMessageAddString(encoder, (CFStringRef)device.systemName, PART_KEY_OS_NAME);
 				LoggerMessageAddString(encoder, (CFStringRef)device.model, PART_KEY_CLIENT_MODEL);
